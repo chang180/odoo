@@ -27,7 +27,21 @@ cp config/odoo.conf.example config/odoo.conf
 
 **注意**：`config/odoo.conf` 包含敏感資訊（如管理員密碼），不會被提交到版控。請使用 `config/odoo.conf.example` 作為範本。
 
-### 2. 啟動服務
+### 2. 初始化資料庫（首次執行）
+
+首次使用時，需要初始化 Odoo 資料庫：
+
+```bash
+# 啟動資料庫服務
+docker-compose up -d db
+
+# 等待資料庫就緒後，執行初始化
+docker-compose --profile init up odoo-init
+```
+
+初始化完成後，您會看到容器正常退出（exit code 0）。
+
+### 3. 啟動服務
 
 ```bash
 docker-compose up -d
@@ -39,7 +53,9 @@ docker-compose up -d
 - 啟動 Odoo 服務
 - 建立必要的資料卷
 
-### 3. 存取 Odoo
+**注意**：如果已經執行過初始化步驟，直接執行 `docker-compose up -d` 即可。
+
+### 4. 存取 Odoo
 
 開啟瀏覽器，前往：
 ```
@@ -48,7 +64,7 @@ http://localhost:8069
 
 首次存取時，Odoo 會引導您建立資料庫。
 
-### 4. 啟用開發者模式
+### 5. 啟用開發者模式
 
 1. 登入 Odoo
 2. 前往「設定」>「啟用開發者模式」
