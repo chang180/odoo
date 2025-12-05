@@ -45,6 +45,10 @@ wheels/
 .env
 .env.local
 
+# Odoo 配置檔案（可能包含敏感資訊）
+# 注意：odoo.conf.example 會保留在版控中作為範本
+config/odoo.conf
+
 # Docker
 docker-compose.override.yml
 

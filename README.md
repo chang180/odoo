@@ -13,13 +13,19 @@
 
 ## 快速開始
 
-### 1. 複製環境變數檔案（可選）
+### 1. 複製配置檔案
 
 ```bash
+# 複製環境變數檔案（可選）
 cp .env.example .env
+
+# 複製 Odoo 配置檔案
+cp config/odoo.conf.example config/odoo.conf
 ```
 
-然後編輯 `.env` 檔案，修改資料庫密碼等設定（預設值通常可以正常運作）。
+然後編輯 `.env` 和 `config/odoo.conf` 檔案，修改資料庫密碼等設定（預設值通常可以正常運作）。
+
+**注意**：`config/odoo.conf` 包含敏感資訊（如管理員密碼），不會被提交到版控。請使用 `config/odoo.conf.example` 作為範本。
 
 ### 2. 啟動服務
 
