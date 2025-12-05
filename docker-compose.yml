@@ -6,6 +6,8 @@ services:
       - POSTGRES_USER=${POSTGRES_USER:-odoo}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-odoo}
       - PGDATA=/var/lib/postgresql/data/pgdata
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - odoo-db-data:/var/lib/postgresql/data
     networks:
@@ -15,25 +17,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
-  odoo-init:
-    image: odoo:latest
-    depends_on:
-      db:
-        condition: service_healthy
-    volumes:
-      - odoo-web-data:/var/lib/odoo
-      - ./addons:/mnt/extra-addons
-      - ./config:/etc/odoo
-    environment:
-      - HOST=${POSTGRES_HOST:-db}
-      - USER=${POSTGRES_USER:-odoo}
-      - PASSWORD=${POSTGRES_PASSWORD:-odoo}
-    networks:
-      - odoo-network
-    command: ["odoo", "-i", "base", "-d", "odoo", "--stop-after-init", "--config=/etc/odoo/odoo.conf"]
-    profiles:
-      - init
 
   odoo:
     image: odoo:latest

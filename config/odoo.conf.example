@@ -7,7 +7,7 @@ db_host = db
 db_port = 5432
 db_user = odoo
 db_password = odoo
-db_name = odoo
+; db_name = odoo  ; 註解掉此選項以允許資料庫管理頁面顯示所有資料庫
 db_maxconn = 64
 db_template = template0
 
@@ -33,7 +33,7 @@ admin_passwd = admin
 
 ; 資料庫管理（允許建立/刪除資料庫）
 list_db = True
-db_filter = .*
+dbfilter = .*  ; 顯示所有資料庫（使用 dbfilter 而不是 db_filter）
 
 ; 其他設定
 workers = 0
