@@ -6,6 +6,10 @@
         <field name="sequence">10</field>
         <field name="state">disabled</field>
         <field name="is_published">False</field>
+        <field name="redirect_form_view_id" ref="newebpay_form"/>
+        <field name="payment_method_ids"
+               eval="[Command.set([ref('payment_method_newebpay')])]"
+        />
     </record>
 </odoo>
 

@@ -6,10 +6,27 @@
         <field name="inherit_id" ref="payment.payment_provider_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='code']" position="after">
-                <field name="newebpay_merchant_id" attrs="{'invisible': [('code', '!=', 'newebpay')], 'required': [('code', '=', 'newebpay')]}"/>
-                <field name="newebpay_hash_key" attrs="{'invisible': [('code', '!=', 'newebpay')], 'required': [('code', '=', 'newebpay')]}"/>
-                <field name="newebpay_hash_iv" attrs="{'invisible': [('code', '!=', 'newebpay')], 'required': [('code', '=', 'newebpay')]}"/>
-                <field name="newebpay_test_mode" attrs="{'invisible': [('code', '!=', 'newebpay')]}"/>
+                <group string="藍新金流設定" invisible="code != 'newebpay'">
+                    <field name="newebpay_merchant_id"
+                           required="code == 'newebpay'"
+                           placeholder="請輸入商店代號"/>
+                    <field name="newebpay_hash_key"
+                           required="code == 'newebpay'"
+                           password="True"
+                           placeholder="請輸入 Hash Key"/>
+                    <field name="newebpay_hash_iv"
+                           required="code == 'newebpay'"
+                           password="True"
+                           placeholder="請輸入 Hash IV"/>
+                    <field name="newebpay_test_mode"/>
+                </group>
+                <group string="付款方式設定" invisible="code != 'newebpay'">
+                    <field name="newebpay_credit_card"/>
+                    <field name="newebpay_webatm"/>
+                    <field name="newebpay_vacc"/>
+                    <field name="newebpay_cvs"/>
+                    <field name="newebpay_barcode"/>
+                </group>
             </xpath>
         </field>
     </record>

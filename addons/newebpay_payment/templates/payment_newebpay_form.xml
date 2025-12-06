@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 藍新金流付款表單模板 -->
+    <template id="newebpay_form" name="NewebPay Redirect Form">
+        <form id="newebpay_payment_form" t-att-action="api_url" method="post">
+            <input type="hidden" name="MerchantID" t-att-value="MerchantID"/>
+            <input type="hidden" name="TradeInfo" t-att-value="TradeInfo"/>
+            <input type="hidden" name="TradeSha" t-att-value="TradeSha"/>
+            <input type="hidden" name="Version" t-att-value="Version"/>
+            <noscript>
+                <button type="submit" class="btn btn-primary">前往付款</button>
+            </noscript>
+        </form>
+        <script type="text/javascript">
+            document.getElementById('newebpay_payment_form').submit();
+        </script>
+    </template>
+</odoo>

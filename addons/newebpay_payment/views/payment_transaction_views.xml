@@ -6,8 +6,14 @@
         <field name="inherit_id" ref="payment.payment_transaction_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='provider_id']" position="after">
-                <field name="newebpay_trade_no" attrs="{'invisible': [('provider_code', '!=', 'newebpay')]}"/>
-                <field name="newebpay_payment_type" attrs="{'invisible': [('provider_code', '!=', 'newebpay')]}"/>
+                <group string="藍新金流資訊" invisible="provider_code != 'newebpay'">
+                    <field name="newebpay_trade_no"/>
+                    <field name="newebpay_payment_type"/>
+                </group>
+                <group string="退款資訊" invisible="provider_code != 'newebpay'">
+                    <field name="newebpay_refund_trade_no"/>
+                    <field name="newebpay_refund_status"/>
+                </group>
             </xpath>
         </field>
     </record>

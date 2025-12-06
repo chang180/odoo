@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': '藍新金流支付模組',
-    'version': '17.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Accounting/Payment Providers',
     'summary': '整合藍新金流（NewebPay）支付服務',
     'description': """
@@ -26,6 +26,8 @@
         'security/ir.model.access.csv',
         'views/payment_provider_views.xml',
         'views/payment_transaction_views.xml',
+        'templates/payment_newebpay_form.xml',
+        'data/payment_method_data.xml',
         'data/payment_provider_data.xml',
     ],
     'installable': True,

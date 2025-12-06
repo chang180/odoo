@@ -23,13 +23,32 @@
 
 ## 設定說明
 
-1. 前往「會計」>「設定」>「支付提供者」
-2. 建立或編輯藍新金流提供者
-3. 填入以下資訊：
-   - 商店代號（Merchant ID）
-   - Hash Key
-   - Hash IV
-   - 選擇是否啟用測試模式
+### 訪問支付提供者設定（Odoo 19）
+
+在 Odoo 19 中，可以透過以下方式訪問支付提供者設定：
+
+1. **直接訪問 URL**（推薦）：
+   ```
+   http://localhost:8069/web#action=payment.action_payment_provider&model=payment.provider
+   ```
+
+2. **使用搜尋功能**：
+   - 在 Odoo 頂部搜尋框輸入「Payment Providers」或「支付提供者」
+
+3. **透過應用程式選單**：
+   - 前往「應用程式」> 搜尋「Payment Providers」模組
+
+### 設定步驟
+
+1. 開啟支付提供者設定頁面
+2. 找到或建立「藍新金流」提供者
+3. 點擊「編輯」並填入以下資訊：
+   - **商店代號（Merchant ID）**：藍新金流提供的商店代號
+   - **Hash Key**：藍新金流提供的 Hash Key（密碼欄位）
+   - **Hash IV**：藍新金流提供的 Hash IV（密碼欄位）
+   - **測試模式**：勾選表示使用測試環境
+4. 點擊「啟用」按鈕啟用提供者
+5. 點擊「發布」按鈕發布提供者（讓客戶可以看到此付款選項）
 
 ## 開發說明
 
@@ -41,14 +60,20 @@ newebpay_payment/
 ├── __manifest__.py
 ├── models/
 │   ├── __init__.py
-│   ├── payment_provider.py
-│   └── payment_transaction.py
+│   ├── payment_provider.py       # 支付提供者模型擴充
+│   └── payment_transaction.py    # 支付交易模型擴充
 ├── controllers/
 │   ├── __init__.py
-│   └── newebpay_controller.py
+│   └── newebpay_controller.py    # 回調處理控制器
+├── utils/
+│   ├── __init__.py
+│   ├── crypto.py                 # 加密/解密工具
+│   └── api_client.py             # API 客戶端（退款）
 ├── views/
 │   ├── payment_provider_views.xml
 │   └── payment_transaction_views.xml
+├── templates/
+│   └── payment_newebpay_form.xml # 付款表單模板
 ├── security/
 │   └── ir.model.access.csv
 ├── data/
@@ -56,13 +81,25 @@ newebpay_payment/
 └── README.md
 ```
 
+### 已實作功能
+
+- [x] 完整的加密/解密邏輯（AES-256-CBC）
+- [x] SHA256 簽名驗證實作
+- [x] 錯誤處理機制
+- [x] 日誌記錄完善
+- [x] MPG 付款功能（支援多種支付方式）
+- [x] API 退款功能（支援部分退款）
+- [x] 回調處理機制（return 和 notify）
+- [x] 付款表單自動提交
+- [x] Docker 環境配置
+- [x] URL 編碼處理（符合藍新金流 http_build_query 要求）
+- [x] 商店訂單編號格式驗證（長度限制 20 字元，僅英數字）
+- [x] ReturnURL/NotifyURL 埠號處理（強制使用 80/443）
+
 ### 待實作功能
 
-- [ ] 完整的加密/解密邏輯
-- [ ] 簽名驗證實作
-- [ ] 完整的支付流程測試
-- [ ] 錯誤處理機制
-- [ ] 日誌記錄完善
+- [ ] 完整的支付流程測試（需要藍新金流測試帳號）
+- [ ] 退款功能測試
 
 ## 注意事項
 
