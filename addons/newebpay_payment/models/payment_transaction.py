@@ -4,7 +4,6 @@ from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 import logging
 import re
-from urllib.parse import urlparse, urlunparse
 from ..utils.crypto import NewebPayCrypto
 
 _logger = logging.getLogger(__name__)
@@ -57,19 +56,30 @@ class PaymentTransaction(models.Model):
             # 藍新金流要求：ReturnURL 和 NotifyURL 的埠號只能是 80（HTTP）或 443（HTTPS）
             base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
             
+            # 驗證 base_url 是否配置
+            if not base_url:
+                raise ValidationError(_('系統設定中缺少 web.base.url 參數，請在「設定」>「技術」>「參數」>「系統參數」中配置'))
+            
             # 解析 URL 並確保埠號符合要求
+            from urllib.parse import urlparse, urlunparse
             parsed_url = urlparse(base_url)
             scheme = parsed_url.scheme.lower()  # http 或 https
-            hostname = parsed_url.hostname or parsed_url.netloc.split(':')[0]  # 取得主機名
+            hostname = parsed_url.hostname or (parsed_url.netloc.split(':')[0] if ':' in parsed_url.netloc else parsed_url.netloc)
+            
+            # 驗證 hostname 是否存在
+            if not hostname:
+                raise ValidationError(_('無法從 web.base.url 解析主機名稱，請檢查設定是否正確（應為 http://example.com 或 https://example.com 格式）'))
             
             # 根據協定設定正確的埠號（HTTP=80, HTTPS=443）
             # 藍新金流要求埠號必須明確為 80 或 443
             if scheme == 'https':
                 # HTTPS 使用 443
                 port = 443
-            else:
-                # HTTP 使用 80（預設也是 80）
+            elif scheme == 'http':
+                # HTTP 使用 80
                 port = 80
+            else:
+                raise ValidationError(_('web.base.url 必須使用 http:// 或 https:// 協定'))
             
             # 重新組裝 base URL，確保使用正確的埠號
             # 如果主機名已包含埠號資訊，先移除
@@ -391,4 +401,3 @@ class PaymentTransaction(models.Model):
         except Exception as e:
             _logger.error('執行退款時發生錯誤: %s', str(e), exc_info=True)
             raise ValidationError(_('執行退款時發生錯誤: %s') % str(e))
-

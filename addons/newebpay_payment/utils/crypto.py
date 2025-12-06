@@ -97,11 +97,13 @@ class NewebPayCrypto:
             trade_info_str = unpadded.decode('utf-8')
 
             # 解析 query string 為字典
+            # 注意：因為加密時使用了 URL 編碼（quote），解密後需要對值進行 URL 解碼（unquote）
             trade_info_dict = {}
             for pair in trade_info_str.split('&'):
                 if '=' in pair:
                     key, value = pair.split('=', 1)
-                    trade_info_dict[key] = value
+                    # 對值進行 URL 解碼，還原原始值
+                    trade_info_dict[key] = unquote(value)
 
             _logger.debug('解密後的交易資訊: %s', trade_info_dict)
             return trade_info_dict

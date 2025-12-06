@@ -407,3 +407,28 @@
 - **修改檔案**：
   - `addons/newebpay_payment/models/payment_transaction.py`
 - **狀態**：✅ 已修正
+
+### 問題 15：解密後缺少 URL 解碼
+- **問題描述**：`decrypt_trade_info` 方法在解析 query string 時，沒有對值進行 URL 解碼。由於加密時使用了 URL 編碼（`quote`），解密後必須使用 `unquote` 還原原始值，否則包含特殊字符的值會保持 URL 編碼狀態
+- **影響範圍**：
+  - `utils/crypto.py` 第 104 行：直接使用 `value`，未進行 URL 解碼
+  - 導致回調資料中的 URL 編碼值無法正確解析（如 Email 中的 `@` 會被編碼為 `%40`）
+- **解決方案**：
+  - 在解析 query string 時，對每個值使用 `unquote()` 進行 URL 解碼
+  - 確保解密後的資料與加密前一致
+- **修改檔案**：
+  - `addons/newebpay_payment/utils/crypto.py`
+- **狀態**：✅ 已修正
+
+### 問題 16：base_url 缺少空值檢查
+- **問題描述**：`web.base.url` 配置參數在取得後未進行空值檢查。如果此參數未配置或為空，會導致 URL 構建失敗或產生無效的 URL（如 `":80"`）
+- **影響範圍**：
+  - `payment_transaction.py` 第 56 行：直接使用 `base_url`，可能為 None 或空字串
+  - 如果配置缺失，會導致 URL 構建錯誤
+- **解決方案**：
+  - 添加 `base_url` 空值檢查，如果為空則拋出明確的錯誤訊息
+  - 添加 `hostname` 驗證，確保能正確解析主機名稱
+  - 提供清晰的錯誤提示，引導用戶正確配置系統參數
+- **修改檔案**：
+  - `addons/newebpay_payment/models/payment_transaction.py`
+- **狀態**：✅ 已修正
