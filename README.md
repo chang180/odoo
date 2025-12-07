@@ -235,3 +235,20 @@ chmod -R 755 addons/
 
 如有問題或建議，請聯繫開發團隊。
 
+## 📚 部署和配置文檔
+
+所有部署、配置和維護相關文檔已整理到 `/home/ubuntu/odoo-docs/` 目錄：
+
+- **文檔目錄**：`/home/ubuntu/odoo-docs/docs/`
+- **工具腳本**：`/home/ubuntu/odoo-docs/scripts/`
+
+詳細文檔包括：
+- 部署說明（DEPLOYMENT.md）
+- DNS 配置指南（HOSTINGER_SETUP.md）
+- SSL/HTTPS 設置說明
+- 資料庫建立指南
+- Redis 服務資訊
+- 以及其他配置和維護文檔
+
+請參考 `/home/ubuntu/odoo-docs/README.md` 查看完整的文檔列表。
+

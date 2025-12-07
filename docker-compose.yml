@@ -6,8 +6,9 @@ services:
       - POSTGRES_USER=${POSTGRES_USER:-odoo}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-odoo}
       - PGDATA=/var/lib/postgresql/data/pgdata
-    ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+    # 生產環境：不暴露資料庫端口到外部
+    # ports:
+    #   - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - odoo-db-data:/var/lib/postgresql/data
     networks:
@@ -17,6 +18,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
 
   odoo:
     build:
@@ -25,8 +27,9 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    # 生產環境：只暴露給本地主機，透過 Nginx 反向代理訪問
     ports:
-      - "${ODOO_PORT:-8069}:8069"
+      - "127.0.0.1:${ODOO_PORT:-8069}:8069"
     volumes:
       - odoo-web-data:/var/lib/odoo
       - ./addons:/mnt/extra-addons
@@ -38,6 +41,7 @@ services:
     networks:
       - odoo-network
     command: ["odoo", "--config=/etc/odoo/odoo.conf"]
+    restart: unless-stopped
 
 volumes:
   odoo-web-data:

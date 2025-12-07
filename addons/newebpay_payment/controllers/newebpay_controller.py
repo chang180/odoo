@@ -6,11 +6,18 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
+# 導入支付後處理控制器以設置交易監控
+try:
+    from odoo.addons.payment.controllers.post_processing import PaymentPostProcessing
+except ImportError:
+    PaymentPostProcessing = None
+    _logger.warning('無法導入 PaymentPostProcessing，支付狀態監控可能無法正常工作')
+
 
 class NewebPayController(http.Controller):
     """ 藍新金流控制器，處理支付回調和返回頁面 """
 
-    @http.route('/payment/newebpay/return', type='http', auth='none', csrf=False, methods=['GET', 'POST'], save_session=False, website=True)
+    @http.route('/payment/newebpay/return', type='http', auth='none', csrf=False, methods=['GET', 'POST'], website=True)
     def newebpay_return(self, **post):
         """ 處理藍新金流的返回頁面 """
         try:
@@ -22,7 +29,8 @@ class NewebPayController(http.Controller):
             tx = request.env['payment.transaction'].sudo()._get_tx_from_feedback_data('newebpay', post)
             if not tx:
                 _logger.error('找不到對應的交易記錄 - 回調資料: %s', post)
-                return request.redirect('/payment/process')
+                # 重定向到支付狀態頁面（顯示支付未找到）
+                return request.redirect('/payment/status')
             
             _logger.info('找到交易記錄 - 交易編號: %s', tx.reference)
             
@@ -33,12 +41,21 @@ class NewebPayController(http.Controller):
             except Exception as e:
                 _logger.error('處理交易通知時發生錯誤 - 交易編號: %s, 錯誤: %s', tx.reference, str(e), exc_info=True)
             
+            # 設置交易監控，以便支付狀態頁面可以找到交易
+            if PaymentPostProcessing:
+                try:
+                    PaymentPostProcessing.monitor_transaction(tx)
+                    _logger.info('交易已設置監控 - 交易編號: %s', tx.reference)
+                except Exception as e:
+                    _logger.warning('設置交易監控時發生錯誤: %s', str(e))
+            
             # 重導向到確認頁面
-            return request.redirect(f'/payment/status?reference={tx.reference}')
+            return request.redirect('/payment/status')
             
         except Exception as e:
             _logger.error('處理藍新金流返回時發生錯誤: %s', str(e), exc_info=True)
-            return request.redirect('/payment/process')
+            # 發生錯誤時重定向到支付狀態頁面
+            return request.redirect('/payment/status')
 
     @http.route('/payment/newebpay/notify', type='http', auth='none', csrf=False, methods=['POST'], save_session=False)
     def newebpay_notify(self, **post):
